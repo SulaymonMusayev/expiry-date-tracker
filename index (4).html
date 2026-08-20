@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muddat Hisoblagich</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep: #0f0c11;
+    --card: #221b26;
+    --card-hi: #2b2230;
+    --line: #382e3d;
+    --text: #f3ecf1;
+    --text-soft: #a897a6;
+    --violet: #8b6bff;
+    --violet-soft: #c3b3ff;
+    --amber: #ffb02e;
+    --amber-dim: rgba(255,176,46,0.14);
+    --crimson: #ff4d6a;
+    --crimson-dim: rgba(255,77,106,0.14);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+
+  body{
+    margin:0;
+    background: var(--bg-deep);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  .bg-layer{
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(139,107,255,0.16), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(255,77,106,0.10), transparent 55%),
+      var(--bg-deep);
+  }
+
+  .stage{
+    position:relative;
+    max-width: 760px;
+    margin: 0 auto;
+    min-height:100vh;
+    padding: 0 20px;
+  }
+
+  .screen{
+    position:absolute;
+    inset: 0;
+    padding: 0 20px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    opacity:0;
+    transform: translateY(16px);
+    pointer-events:none;
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+  .screen.active{
+    position:relative;
+    opacity:1;
+    transform:none;
+    pointer-events:auto;
+  }
+
+  /* ---------- PAGE 1 : sana kiritish ---------- */
+  #page1{ align-items:center; text-align:center; min-height:100vh; }
+
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-size: clamp(32px, 7vw, 48px);
+    font-weight:700;
+    margin:0 0 40px;
+    letter-spacing:-0.01em;
+  }
+
+  .date-box{
+    display:inline-flex;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    overflow:hidden;
+    box-shadow: 0 20px 50px -20px rgba(0,0,0,0.6);
+    margin-bottom: 28px;
+  }
+  .date-cell{
+    display:flex;
+    flex-direction:column;
+    border-right: 1px solid var(--line);
+    position:relative;
+  }
+  .date-cell:last-child{ border-right:none; }
+  .date-cell label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    text-align:center;
+    padding:14px 0 4px;
+    color: var(--text-soft);
+  }
+  .date-cell select{
+    appearance:none;
+    -webkit-appearance:none;
+    width:100px;
+    text-align:center;
+    text-align-last:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:20px;
+    font-weight:700;
+    border:none;
+    background:transparent;
+    padding:2px 6px 16px;
+    color: var(--text);
+    cursor:pointer;
+  }
+  .date-cell select:focus{ outline:none; color: var(--violet-soft); }
+  .date-cell select option{ background: var(--card); color: var(--text); }
+  .date-cell.month select{
+    width: 150px;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  button.primary{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:15px;
+    letter-spacing:0.01em;
+    background: linear-gradient(135deg, var(--violet), #6f4dff);
+    color: #fff;
+    border:none;
+    padding: 16px 40px;
+    border-radius: 999px;
+    cursor:pointer;
+    box-shadow: 0 12px 30px -10px rgba(139,107,255,0.55);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  button.primary:hover{ transform: translateY(-2px); box-shadow: 0 16px 34px -8px rgba(139,107,255,0.65); }
+  button.primary:active{ transform: translateY(0); }
+
+  /* ---------- PAGE 2 : natijalar ---------- */
+  #page2{ padding-top:40px; padding-bottom:60px; justify-content:flex-start; }
+
+  .p2-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom: 28px;
+    flex-wrap:wrap;
+  }
+  .p2-title-block h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-size: clamp(22px, 4vw, 28px);
+    font-weight:700;
+    margin:0;
+  }
+  .p2-title-block h2 span{ color: var(--violet-soft); }
+
+  button.ghost{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    font-weight:600;
+    color: var(--text-soft);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 10px 18px;
+    cursor:pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+    white-space:nowrap;
+  }
+  button.ghost:hover{ border-color: var(--violet); color: var(--violet-soft); }
+
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 560px){
+    .grid{ grid-template-columns: 1fr; }
+  }
+
+  .cat-card{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px 18px 16px;
+    opacity:0;
+    transform: translateY(10px);
+    animation: rise 0.5s ease forwards;
+  }
+  @keyframes rise{ to{ opacity:1; transform:none; } }
+
+  .cat-label{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:15px;
+    font-weight:700;
+    color: var(--text);
+    margin-bottom:14px;
+  }
+
+  .stat-row{ display:flex; gap:10px; }
+  .stat{
+    flex:1;
+    border-radius: 12px;
+    padding: 10px 12px;
+  }
+  .stat.go{ background: var(--amber-dim); }
+  .stat.sp{ background: var(--crimson-dim); }
+  .stat-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    margin-bottom:5px;
+  }
+  .stat.go .stat-label{ color: var(--amber); }
+  .stat.sp .stat-label{ color: var(--crimson); }
+  .stat-value{
+    font-family:'JetBrains Mono', monospace;
+    font-size:16px;
+    font-weight:700;
+    color: var(--text);
+  }
+</style>
+</head>
+<body>
+<div class="bg-layer"></div>
+<div class="stage">
+
+  <!-- PAGE 1 -->
+  <section class="screen active" id="page1">
+    <h1>Muddat<br>Hisoblagich</h1>
+
+    <div class="date-box">
+      <div class="date-cell">
+        <label>Kun</label>
+        <select id="fday"></select>
+      </div>
+      <div class="date-cell month">
+        <label>Oy</label>
+        <select id="fmonth"></select>
+      </div>
+      <div class="date-cell">
+        <label>Yil</label>
+        <select id="fyear"></select>
+      </div>
+    </div>
+    <div><button type="button" class="primary" id="calcBtn">Hisoblash</button></div>
+  </section>
+
+  <!-- PAGE 2 -->
+  <section class="screen" id="page2">
+    <div class="p2-header">
+      <div class="p2-title-block">
+        <h2>Bugun — <span id="resultDate">—</span></h2>
+      </div>
+      <button type="button" class="ghost" id="backBtn">‹ Qayta hisoblash</button>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </section>
+
+</div>
+
+<script>
+  const SHELF_OPTIONS = [
+    { label: "4 kun",  days: 4,   goStart: 2 },
+    { label: "5 kun",  days: 5,   goStart: 3 },
+    { label: "7 kun",  days: 7,   goStart: 4 },
+    { label: "8 kun",  days: 8,   goStart: 5 },
+    { label: "10 kun", days: 10,  goStart: 5 },
+    { label: "14 kun", days: 14,  goStart: 9 },
+    { label: "15 kun", days: 15,  goStart: 10 },
+    { label: "1 oy",   days: 30,  goStart: 20 },
+    { label: "2 oy",   days: 60,  goStart: 25 },
+    { label: "3 oy",   days: 90,  goStart: 30 },
+    { label: "6 oy",   days: 180, goStart: 30 },
+    { label: "1 yil",  days: 365, goStart: 30 },
+  ];
+
+  const MONTH_NAMES = ["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentyabr","Oktyabr","Noyabr","Dekabr"];
+
+  const daySelect = document.getElementById('fday');
+  const monthSelect = document.getElementById('fmonth');
+  const yearSelect = document.getElementById('fyear');
+
+  // Yillar ro'yxati — kalendarga asoslangan, kabisa yillar avtomatik hisoblanadi
+  const now = new Date();
+  const YEAR_MIN = 2024, YEAR_MAX = 2032;
+  for (let y = YEAR_MIN; y <= YEAR_MAX; y++){
+    const o = document.createElement('option');
+    o.value = y; o.textContent = y;
+    yearSelect.appendChild(o);
+  }
+
+  MONTH_NAMES.forEach((name, i) => {
+    const o = document.createElement('option');
+    o.value = i + 1; o.textContent = name;
+    monthSelect.appendChild(o);
+  });
+
+  function daysInMonth(year, month){
+    // month: 1-12. new Date(year, month, 0) -> shu oyning oxirgi kuni.
+    return new Date(year, month, 0).getDate();
+  }
+
+  function rebuildDayOptions(){
+    const year = parseInt(yearSelect.value, 10);
+    const month = parseInt(monthSelect.value, 10);
+    const total = daysInMonth(year, month);
+    const prevSelected = parseInt(daySelect.value, 10) || now.getDate();
+
+    daySelect.innerHTML = '';
+    for (let d = 1; d <= total; d++){
+      const o = document.createElement('option');
+      o.value = d; o.textContent = String(d).padStart(2,'0');
+      daySelect.appendChild(o);
+    }
+    daySelect.value = Math.min(prevSelected, total);
+  }
+
+  // Boshlang'ich qiymatlar — bugungi sana
+  yearSelect.value = now.getFullYear();
+  monthSelect.value = now.getMonth() + 1;
+  rebuildDayOptions();
+  daySelect.value = now.getDate();
+
+  monthSelect.addEventListener('change', rebuildDayOptions);
+  yearSelect.addEventListener('change', rebuildDayOptions);
+
+  function addDays(date, n){ const d = new Date(date); d.setDate(d.getDate() + n); return d; }
+  function startOfDay(d){ const x = new Date(d); x.setHours(0,0,0,0); return x; }
+  function fmt(d){
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const yy = d.getFullYear();
+    return `${dd}.${mm}.${yy}`;
+  }
+
+  function renderGrid(today){
+    document.getElementById('resultDate').textContent = fmt(today);
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+
+    SHELF_OPTIONS.forEach((opt, i) => {
+      const goManufactureDate = startOfDay(addDays(today, -(opt.goStart - 1)));
+      const spManufactureDate = startOfDay(addDays(today, -(opt.days - 2)));
+
+      const card = document.createElement('div');
+      card.className = 'cat-card';
+      card.style.animationDelay = (i * 0.04) + 's';
+      card.innerHTML = `
+        <div class="cat-label">${opt.label}</div>
+        <div class="stat-row">
+          <div class="stat go">
+            <div class="stat-label">GO LIST</div>
+            <div class="stat-value">${fmt(goManufactureDate)}</div>
+          </div>
+          <div class="stat sp">
+            <div class="stat-label">Списание</div>
+            <div class="stat-value">${fmt(spManufactureDate)}</div>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function goToPage2(){
+    document.getElementById('page1').classList.remove('active');
+    document.getElementById('page2').classList.add('active');
+  }
+  function goToPage1(){
+    document.getElementById('page2').classList.remove('active');
+    document.getElementById('page1').classList.add('active');
+  }
+
+  document.getElementById('calcBtn').addEventListener('click', () => {
+    const day = parseInt(daySelect.value, 10);
+    const month = parseInt(monthSelect.value, 10);
+    const year = parseInt(yearSelect.value, 10);
+    const d = new Date(year, month - 1, day);
+
+    renderGrid(startOfDay(d));
+    goToPage2();
+  });
+
+  document.getElementById('backBtn').addEventListener('click', goToPage1);
+</script>
+</body>
+</html>
